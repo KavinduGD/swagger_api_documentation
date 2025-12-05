@@ -73,3 +73,9 @@
 ### Swagger Explore
 
 - a free API client that allows users to interact with and test APIs, including REST and event-driven services like Kafka. Can generate OpenAPI specs from existing http APIs.
+
+## Openapi structure
+
+<img src="./images/structure.png" width="1100"/>
+
+- https://openapi-map.apihandyman.io/
