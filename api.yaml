@@ -51,12 +51,7 @@ paths:
       summary: List all catgories
       description: Returns the list of categories supported by EazyShop
       parameters:
-        - name: categoryId
-          in: query
-          schema:
-            type: integer
-            minimum: 100
-            maximum: 1000
+        - $ref: "#/components/parameters/categoryIdQueryParam"
           examples:
             Mobiles:
               value: 101
@@ -72,12 +67,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    categoryId:
-                      type: integer
-                    name:
-                      type: string
+                  $ref: "#/components/schemas/categorySchema"
               examples:
                 all-categories-data:
                   summary: When not passing the categoryId
@@ -93,6 +83,8 @@ paths:
                   value:
                     - categoryId: 101
                       name: Mobile
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /categories/{categoryId}:
     get:
       tags:
@@ -100,13 +92,7 @@ paths:
       summary: Return category details
       description: Returns the category details from EazyShop
       parameters:
-        - name: categoryId
-          in: path
-          required: true
-          schema:
-            type: integer
-            minimum: 100
-            maximum: 1000
+        - $ref: "#/components/parameters/categoryIdPathParam"
           example: 102
       responses:
         "200":
@@ -114,12 +100,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  categoryId:
-                    type: integer
-                  name:
-                    type: string
+                $ref: "#/components/schemas/categorySchema"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /products:
     get:
       tags:
@@ -143,23 +126,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    productId:
-                      type: integer
-                    name:
-                      type: string
-                    price:
-                      type: number
-                    categoryName:
-                      type: string
-                    releaseDate:
-                      type: string
-                    quantity:
-                      type: integer
-                      description: |
-                        ***Quantity*** refer to the stock quantity
-                        <u> Not the quantity of an order by a customer </u>
+                  $ref: "#/components/schemas/productSchema"
               examples:
                 Mobile Products:
                   summary: Products of mobile category
@@ -197,6 +164,8 @@ paths:
                       categoryName: Laptop
                       releaseDate: 2019-11-11
                       quantity: 30
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /products/{productId}:
     get:
       tags:
@@ -220,20 +189,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  productId:
-                    type: integer
-                  name:
-                    type: string
-                  price:
-                    type: number
-                  categoryName:
-                    type: string
-                  releaseDate:
-                    type: string
-                  quantity:
-                    type: integer
+                $ref: "#/components/schemas/productSchema"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /orders:
     get:
       tags:
@@ -242,12 +200,7 @@ paths:
       description: |
         Get order details by order id
       parameters:
-        - name: orderId
-          in: query
-          required: true
-          schema:
-            type: integer
-          example: 10
+        - $ref: "#/components/parameters/orderIdQueryParam"
       responses:
         "200":
           description: order details received successfully
@@ -261,27 +214,11 @@ paths:
                   products:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        productId:
-                          type: integer
-                        name:
-                          type: string
-                        price:
-                          type: number
-                        quantity:
-                          type: integer
+                      $ref: "#/components/schemas/productSchema"
                   address:
-                    type: object
-                    properties:
-                      addressLine:
-                        type: string
-                      city:
-                        type: string
-                      state:
-                        type: string
-                      zipcode:
-                        type: string
+                    $ref: "#/components/schemas/addressSchema"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     post:
       tags:
         - Orders
@@ -297,27 +234,9 @@ paths:
                 products:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      productId:
-                        type: integer
-                      name:
-                        type: string
-                      price:
-                        type: number
-                      quantity:
-                        type: integer
+                    $ref: "#/components/schemas/productSchema"
                 address:
-                  type: object
-                  properties:
-                    addressLine:
-                      type: string
-                    city:
-                      type: string
-                    state:
-                      type: string
-                    zipcode:
-                      type: string
+                  $ref: "#/components/schemas/addressSchema"
             examples:
               order-data:
                 summary: Sample order data
@@ -346,6 +265,8 @@ paths:
                 properties:
                   objectId:
                     type: integer
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     put:
       tags:
         - Orders
@@ -363,42 +284,90 @@ paths:
                 products:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      productId:
-                        type: integer
-                      name:
-                        type: string
-                      price:
-                        type: number
-                      quantity:
-                        type: integer
+                    $ref: "#/components/schemas/productSchema"
                 address:
-                  type: object
-                  properties:
-                    addressLine:
-                      type: string
-                    city:
-                      type: string
-                    state:
-                      type: string
-                    zipcode:
-                      type: string
+                  $ref: "#/components/schemas/addressSchema"
+
       responses:
         "200":
           description: order updated successfully
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     delete:
       tags:
         - Orders
       summary: delete order
       description: delete a order from shop
       parameters:
-        - name: orderId
-          in: query
-          required: true
-          schema:
-            type: integer
-          example: 10
+        - $ref: "#/components/parameters/orderIdQueryParam"
       responses:
         "204":
           description: order deleted successfully
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+components:
+  parameters:
+    orderIdQueryParam:
+      name: orderId
+      in: query
+      required: true
+      schema:
+        type: integer
+      example: 10
+    categoryIdQueryParam:
+      name: categoryId
+      in: query
+      schema:
+        type: integer
+        minimum: 100
+        maximum: 1000
+    categoryIdPathParam:
+      name: categoryId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 100
+        maximum: 1000
+  schemas:
+    addressSchema:
+      type: object
+      properties:
+        addressLine:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipcode:
+          type: string
+    productSchema:
+      type: object
+      properties:
+        productId:
+          type: integer
+        name:
+          type: string
+        price:
+          type: number
+        categoryName:
+          type: string
+        releaseDate:
+          type: string
+        quantity:
+          type: integer
+          description: |
+            ***Quantity*** refer to the stock quantity
+            <u> Not the quantity of an order by a customer </u>
+    categorySchema:
+      type: object
+      properties:
+        categoryId:
+          type: integer
+        name:
+          type: string
+  responses:
+    InternalServerError:
+      description: |
+        error occurred while processing the request.
+        Please contact support@eazyshop.com
