@@ -2,7 +2,28 @@ openapi: 3.0.3
 info:
   title: EazyShop Products APIs Definition
   description: |
-    **EazyShop** is a open market product selling company. Any website can list our products by  using our _APIs_. Shipping & other logistics will be taken care by us. You will get an Affiliate commision for selling our products.
+    # About us
+    **EazyShop** is a open market ***product*** selling company. Any website can list our products by  using our _APIs_. Shipping & other `logistics` will be taken care by us. You will get an Affiliate commision for selling our products.
+    ```
+    let a=10
+    console.log(a)
+    ```
+    # Categories
+    - Mobiles 
+      - Apple
+      - Nokia
+      - Samsung
+    - laptops
+      - Asus
+      - MSI
+      - Dell
+    - Television
+      - LG
+      - Abanz 
+
+    [This is a link](https://www.google.com/)
+
+    <img src="https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg" width ="600px">
   termsOfService: https://eazyshop.com/terms/
   contact:
     name: API Support
@@ -15,10 +36,18 @@ info:
 servers:
   - url: https://development.eazyshop-server.com/v1
     description: Development servers
-
+tags:
+  - name: Categories
+    description: Operations related to product categories in EazyShop
+  - name: Products
+    description: Operations related to products in EazyShop
+  - name: Orders
+    description: Operations related to orders in EazyShop
 paths:
   /categories:
     get:
+      tags:
+        - Categories
       summary: List all catgories
       description: Returns the list of categories supported by EazyShop
       parameters:
@@ -28,8 +57,13 @@ paths:
             type: integer
             minimum: 100
             maximum: 1000
-            example:
-              - 101
+          examples:
+            Mobiles:
+              value: 101
+            Laptops:
+              value: 102
+            Television:
+              value: 103
       responses:
         "200":
           description: A list of catgories
@@ -44,8 +78,25 @@ paths:
                       type: integer
                     name:
                       type: string
+              examples:
+                all-categories-data:
+                  summary: When not passing the categoryId
+                  value:
+                    - categoryId: 101
+                      name: Mobiles
+                    - categoryId: 102
+                      name: Laptops
+                    - categoryId: 101
+                      name: Television
+                one-category_data:
+                  summary: When passing the categoryId
+                  value:
+                    - categoryId: 101
+                      name: Mobile
   /categories/{categoryId}:
     get:
+      tags:
+        - Categories
       summary: Return category details
       description: Returns the category details from EazyShop
       parameters:
@@ -71,6 +122,8 @@ paths:
                     type: string
   /products:
     get:
+      tags:
+        - Products
       summary: List all products
       description: |
         Returns the list of products supported by EazyShop
@@ -104,8 +157,50 @@ paths:
                       type: string
                     quantity:
                       type: integer
+                      description: |
+                        ***Quantity*** refer to the stock quantity
+                        <u> Not the quantity of an order by a customer </u>
+              examples:
+                Mobile Products:
+                  summary: Products of mobile category
+                  value:
+                    - productId: 101-1
+                      name: Apple 13
+                      price: 200000.00
+                      categoryName: Mobile
+                      releaseDate: 2000-07-18
+                      quantity: 10
+                    - productId: 101-2
+                      name: Samsung a03
+                      price: 30000.00
+                      categoryName: Mobile
+                      releaseDate: 2020-12-12
+                      quantity: 48
+                    - productId: 101-3
+                      name: Nokia buttton
+                      price: 1000.00
+                      categoryName: Mobile
+                      releaseDate: 1999-12-15
+                      quantity: 100
+                Laptop Products:
+                  summary: Products of laptop category
+                  value:
+                    - productId: 102-1
+                      name: Asus Rog
+                      price: 150000.00
+                      categoryName: Laptop
+                      releaseDate: 2021-05-10
+                      quantity: 25
+                    - productId: 102-2
+                      name: Dell Inspiron
+                      price: 80000.00
+                      categoryName: Laptop
+                      releaseDate: 2019-11-11
+                      quantity: 30
   /products/{productId}:
     get:
+      tags:
+        - Products
       summary: Return product details
       description: |
         Returns the product details from  EazyShop
@@ -141,6 +236,8 @@ paths:
                     type: integer
   /orders:
     get:
+      tags:
+        - Orders
       summary: get order
       description: |
         Get order details by order id
@@ -186,6 +283,8 @@ paths:
                       zipcode:
                         type: string
     post:
+      tags:
+        - Orders
       summary: create order
       description: |
         Post order details to shop for processing and shiping
@@ -219,6 +318,24 @@ paths:
                       type: string
                     zipcode:
                       type: string
+            examples:
+              order-data:
+                summary: Sample order data
+                value:
+                  products:
+                    - productId: 101-1
+                      name: Apple 13
+                      price: 200000.00
+                      quantity: 1
+                    - productId: 102-2
+                      name: Dell Inspiron
+                      price: 80000.00
+                      quantity: 1
+                  address:
+                    addressLine: "123, Baker Street"
+                    city: "New York"
+                    state: "NY"
+                    zipcode: "10001"
       responses:
         "201":
           description: order added successfully
@@ -230,6 +347,8 @@ paths:
                   objectId:
                     type: integer
     put:
+      tags:
+        - Orders
       summary: update order
       description: |
         update order details to shop for processing and shiping
@@ -269,6 +388,8 @@ paths:
         "200":
           description: order updated successfully
     delete:
+      tags:
+        - Orders
       summary: delete order
       description: delete a order from shop
       parameters:
