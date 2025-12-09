@@ -133,7 +133,7 @@ paths:
                   value:
                     - productId: 101-1
                       name: Apple 13
-                      price: 200000.00
+                      price: 200000.45
                       categoryName: Mobile
                       releaseDate: 2000-07-18
                       quantity: 10
@@ -145,7 +145,7 @@ paths:
                       quantity: 48
                     - productId: 101-3
                       name: Nokia buttton
-                      price: 1000.00
+                      price: 1000.12
                       categoryName: Mobile
                       releaseDate: 1999-12-15
                       quantity: 100
@@ -154,7 +154,7 @@ paths:
                   value:
                     - productId: 102-1
                       name: Asus Rog
-                      price: 150000.00
+                      price: 150000.66
                       categoryName: Laptop
                       releaseDate: 2021-05-10
                       quantity: 25
@@ -341,6 +341,14 @@ components:
           type: string
         zipcode:
           type: string
+        isOfficeAddress:
+          type: boolean
+      required:
+        - addressLine
+        - city
+        - state
+        - zipcode
+        - isOfficeAddress
     productSchema:
       type: object
       properties:
@@ -350,10 +358,14 @@ components:
           type: string
         price:
           type: number
+          format: float
         categoryName:
           type: string
+          nullable: true
         releaseDate:
           type: string
+          format: date
+          readOnly: true
         quantity:
           type: integer
           description: |
