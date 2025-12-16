@@ -305,6 +305,62 @@ paths:
           description: order deleted successfully
         "500":
           $ref: "#/components/responses/InternalServerError"
+  /oneOfOrder:
+    post:
+      tags:
+        - Orders
+      summary: Insert OneOf the Order Details
+      description: Insert OneOf the Order Details into Eazyshop
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                products:
+                  type: object
+                  oneOf:
+                    - $ref: "#/components/schemas/mobileSchema"
+                    - $ref: "#/components/schemas/laptopSchema"
+                address:
+                  $ref: "#/components/schemas/addressSchema"
+              required:
+                - products
+                - address
+      responses:
+        "200":
+          description: Order placed successfully
+  /anyOfOrder:
+    get:
+      tags:
+        - Orders
+      summary: Get Order Details
+      description: Get Order Details based on Order ID
+      parameters:
+        - $ref: "#/components/parameters/orderIdQueryParam"
+        - name: fetchType
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - summary
+              - details
+          description: >
+            Fetch Type:
+            * `summary` - Will provide Order Summary
+            * `details` - Will provide Order Summary & Order Address
+
+      responses:
+        "200":
+          description: Return product details
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - $ref: "#/components/schemas/OrderSummary"
+                  - $ref: "#/components/schemas/OrderAddress"
+
 components:
   parameters:
     orderIdQueryParam:
@@ -339,6 +395,10 @@ components:
           type: string
         state:
           type: string
+          enum:
+            - Colombo
+            - Gampaha
+            - Migamuwa
         zipcode:
           type: string
         isOfficeAddress:
@@ -349,6 +409,13 @@ components:
         - state
         - zipcode
         - isOfficeAddress
+    categorySchema:
+      type: object
+      properties:
+        categoryId:
+          type: integer
+        name:
+          type: string
     productSchema:
       type: object
       properties:
@@ -371,13 +438,50 @@ components:
           description: |
             ***Quantity*** refer to the stock quantity
             <u> Not the quantity of an order by a customer </u>
-    categorySchema:
+      required:
+        - productId
+        - name
+        - price
+        - releaseDate
+        - quantity
+
+    mobileSchema:
+      allOf:
+        - $ref: "#/components/schemas/productSchema"
       type: object
       properties:
-        categoryId:
-          type: integer
-        name:
+        networkType:
           type: string
+          enum:
+            - 4G
+            - 5G
+      required:
+        - networkType
+    laptopSchema:
+      allOf:
+        - $ref: "#/components/schemas/productSchema"
+      type: object
+      properties:
+        ram:
+          type: string
+          enum:
+            - 1Gb
+            - 2Gb
+            - 4Gb
+            - 8Gb
+            - 16Gb
+      required:
+        - ram
+    OrderSummary:
+      type: array
+      items:
+        $ref: "#/components/schemas/productSchema"
+    OrderAddress:
+      type: object
+      properties:
+        address:
+          $ref: "#/components/schemas/addressSchema"
+
   responses:
     InternalServerError:
       description: |
