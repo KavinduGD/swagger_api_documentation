@@ -33,6 +33,16 @@ info:
     name: EazyShop License
     url: https://www.eazyshop.com/licenses/LICENSE-2.0.html
   version: 0.0.1
+  x-custom-info:
+    comment: Some comments
+    authors:
+      - name: John Doe
+        email: john@doe.com
+      - name: Jane Doe
+        email: jane@doe.com
+externalDocs:
+  url: https://www.eazyshop.com/docs
+  description: External documentation for EazyShop APIs
 servers:
   - url: https://development.eazyshop-server.com/v1
     description: Development servers
@@ -50,6 +60,7 @@ paths:
         - Categories
       summary: List all catgories
       description: Returns the list of categories supported by EazyShop
+      operationId: getCategories
       parameters:
         - $ref: "#/components/parameters/categoryIdQueryParam"
           examples:
@@ -91,6 +102,7 @@ paths:
         - Categories
       summary: Return category details
       description: Returns the category details from EazyShop
+      operationId: getCategoryDetails
       parameters:
         - $ref: "#/components/parameters/categoryIdPathParam"
           example: 102
@@ -110,6 +122,7 @@ paths:
       summary: List all products
       description: |
         Returns the list of products supported by EazyShop
+      operationId: getProducts
       parameters:
         - name: categoryId
           in: query
@@ -199,6 +212,7 @@ paths:
       summary: get order
       description: |
         Get order details by order id
+      operationId: getOrders
       parameters:
         - $ref: "#/components/parameters/orderIdQueryParam"
       responses:
@@ -225,6 +239,7 @@ paths:
       summary: create order
       description: |
         Post order details to shop for processing and shiping
+      operationId: createOrder
       requestBody:
         content:
           application/json:
@@ -263,8 +278,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  objectId:
+                  orderId:
                     type: integer
+          links:
+            GetOrderByOrderId:
+              $ref: "#/components/links/GetOrderByOrderId"
         "500":
           $ref: "#/components/responses/InternalServerError"
     put:
@@ -273,6 +291,7 @@ paths:
       summary: update order
       description: |
         update order details to shop for processing and shiping
+      operationId: updateOrder
       requestBody:
         content:
           application/json:
@@ -298,11 +317,40 @@ paths:
         - Orders
       summary: delete order
       description: delete a order from shop
+      operationId: deleteOrder
       parameters:
         - $ref: "#/components/parameters/orderIdQueryParam"
       responses:
         "204":
           description: order deleted successfully
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /orders/{orderId}:
+    get:
+      tags:
+        - Orders
+      summary: Get Order Address
+      description: Get Order Address based on Order ID
+      operationId: getOrderAddress
+      deprecated: true
+      parameters:
+        - $ref: "#/components/parameters/orderIdPathParam"
+      responses:
+        "200":
+          description: Return order address details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orderId:
+                    type: integer
+                  products:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/productSchema"
+                  address:
+                    $ref: "#/components/schemas/addressSchema"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /oneOfOrder:
@@ -311,6 +359,7 @@ paths:
         - Orders
       summary: Insert OneOf the Order Details
       description: Insert OneOf the Order Details into Eazyshop
+      operationId: insertOneOfOrder
       requestBody:
         content:
           application/json:
@@ -336,6 +385,7 @@ paths:
         - Orders
       summary: Get Order Details
       description: Get Order Details based on Order ID
+      operationId: getAnyOfOrder
       parameters:
         - $ref: "#/components/parameters/orderIdQueryParam"
         - name: fetchType
@@ -366,6 +416,13 @@ components:
     orderIdQueryParam:
       name: orderId
       in: query
+      required: true
+      schema:
+        type: integer
+      example: 10
+    orderIdPathParam:
+      name: orderId
+      in: path
       required: true
       schema:
         type: integer
@@ -481,9 +538,16 @@ components:
       properties:
         address:
           $ref: "#/components/schemas/addressSchema"
-
   responses:
     InternalServerError:
       description: |
         error occurred while processing the request.
         Please contact support@eazyshop.com
+  links:
+    GetOrderByOrderId:
+      description: >
+        The `orderId` value returned in the response can be used
+        as input parameter in `GET /orders`.
+      operationId: getOrders
+      parameters:
+        orderId: "$response.body#/orderId"
