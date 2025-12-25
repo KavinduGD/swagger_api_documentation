@@ -13,7 +13,7 @@ info:
       - Apple
       - Nokia
       - Samsung
-    - laptops
+    - Laptops
       - Asus
       - MSI
       - Dell
@@ -46,6 +46,10 @@ externalDocs:
 servers:
   - url: https://development.eazyshop-server.com/v1
     description: Development servers
+security:
+  - BasicAuth: []
+  - BearerAuth: []
+  - ApiKeyAuth: []
 tags:
   - name: Categories
     description: Operations related to product categories in EazyShop
@@ -551,3 +555,15 @@ components:
       operationId: getOrders
       parameters:
         orderId: "$response.body#/orderId"
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
